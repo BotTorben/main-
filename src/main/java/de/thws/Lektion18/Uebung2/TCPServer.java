@@ -31,7 +31,7 @@ public class TCPServer {
                 }
                 out.println("Zu erratendes Wort: " + String.valueOf(wortCh));
                 if(String.valueOf(wortCh).equals(woerter[2])){
-                    out.println("Du hast Gewonnen. Das Wort war: " +  String.valueOf(wortCh));
+                    out.write("Du hast Gewonnen. Das Wort war: " +  String.valueOf(wortCh));
                     return;
                 }
             }
