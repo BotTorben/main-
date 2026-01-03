@@ -1,74 +1,72 @@
 package Lektion18Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import de.thws.Lektion18.Uebung3.ToUpperCaseWriter;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ToUpperCaseWriterTest
 {
-  ToUpperCaseWriter writer;
-  ByteArrayOutputStream baos;
-
+    public ByteArrayOutputStream baos;
   @BeforeEach
-  public void prepareTest()
-  {
-    baos = new ByteArrayOutputStream();
-    OutputStreamWriter osw = new OutputStreamWriter(baos);
-    writer = new ToUpperCaseWriter(osw);
+  public void prepareTest(){
+      baos = new ByteArrayOutputStream();
+  }
+
+  private String checkChar(char c){
+      baos.reset();
+      try(OutputStreamWriter osw = new OutputStreamWriter(baos);
+      Writer writer = new ToUpperCaseWriter(osw))
+      {
+          writer.write(c);
+          writer.flush();
+          String uppercase = baos.toString();
+          writer.close();
+          return uppercase;
+      } catch (Exception e) {
+          e.printStackTrace();
+          return null;
+      }
   }
 
   @Test
-  public void writeCharTest()
-  {
-    try
-    {
-      writer.write('a');
-      writer.flush();
-      String uppercase = baos.toString();
-      assertEquals(uppercase, "A");
-      writer.close();
-    }
-    catch (IOException e)
-    {
-      fail("IOException" + e.getMessage());
-    }
+  public void writeCharTest(){
+      assertEquals("A",checkChar('a'));
   }
 
   @Test
-  public void writeCharTestWithNonChar()
-  {
-    try
-    {
-      writer.write('1');
-      writer.flush();
-      String uppercase = baos.toString();
-      assertEquals(uppercase, "1");
-      writer.close();
-    }
-    catch (IOException e)
-    {
-      fail("IOException" + e.getMessage());
-    }
+  public void writeCharTestWithNonChar() {
+      assertEquals("1", checkChar('1'));
+
   }
-  
-  @AfterEach
-  public void cleanUp()
-  {
-    try
-    {
-      writer.close();
+
+    @Test
+    public void testAsciiLettersToUpperCase() {
+        for (int i = 0; i < 128; i++) {
+            char c = (char) i;
+            if (c >= 'a' && c <= 'z') {
+                String result = checkChar(c);
+                String expected = String.valueOf(c).toUpperCase();
+                assertEquals(expected, result, "Fehler bei Kleinbuchstabe: " + c);
+            }
+        }
     }
-    catch (IOException e)
-    {
-      fail("IOException" + e.getMessage());
+
+    @Test
+    public void testAsciiNonLettersUnchanged() {
+        for (int i = 0; i < 128; i++) {
+            char c = (char) i;
+            if (!(c >= 'a' && c <= 'z')) {
+                String result = checkChar(c);
+                String expected = String.valueOf(c);
+                assertEquals(expected, result, "Fehler bei Nicht-Kleinbuchstabe: " + c);
+            }
+        }
     }
-  }
+
 }
