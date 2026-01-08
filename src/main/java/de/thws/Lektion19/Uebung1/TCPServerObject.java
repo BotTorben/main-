@@ -13,8 +13,8 @@ public class TCPServerObject {
             Socket connection = ss.accept();
             )
         {
-            ObjectOutputStream os = new ObjectOutputStream(connection.getOutputStream());
-            os.flush();
+            OutputStreamWriter out= new OutputStreamWriter(connection.getOutputStream());
+            out.flush();
             ObjectInputStream is = new ObjectInputStream(connection.getInputStream());
             String inputline;
             String wort = "";
@@ -23,7 +23,7 @@ public class TCPServerObject {
                 wort += "_";
             }
             char[] wortCh = wort.toCharArray();
-            while((inputline = in.readLine()) != null){
+            while((inputline = is.readLine()) != null){
                 System.out.println("Empfangene Zeichen: " + inputline);
                 char geratenerBuchstabe = inputline.charAt(0);
                 for (int i = 0; i < wortCh.length; i++){
@@ -31,7 +31,7 @@ public class TCPServerObject {
                         wortCh[i] = geratenerBuchstabe;
                     }
                 }
-                out.println("Zu erratendes Wort: " + String.valueOf(wortCh));
+                out.write("Zu erratendes Wort: " + String.valueOf(wortCh));
                 if(String.valueOf(wortCh).equals(woerter[2])){
                     out.write("Du hast Gewonnen. Das Wort war: " +  String.valueOf(wortCh));
                     return;
