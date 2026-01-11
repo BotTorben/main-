@@ -16,7 +16,6 @@ public class Exam{
             String header = readHeaderFromFile();
             bw.write(header);
             bw.newLine();
-            bw.flush();
 
             for(Question q: questions){
                 String laTex = "\\textbf{" + q.text + "}\\";
